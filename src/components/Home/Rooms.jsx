@@ -11,6 +11,7 @@ import { useSearchParams } from 'react-router-dom'
 const Rooms = () => {
  
   const axiosCommon = useAxiosCommon();
+  // eslint-disable-next-line no-unused-vars
   const [params, setParam] = useSearchParams();
   const category = params.get('category')
 
