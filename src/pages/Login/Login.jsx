@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
 import { TbFidgetSpinner } from 'react-icons/tb'
 import { useState } from 'react'
@@ -10,6 +10,8 @@ const Login = () => {
   const { signIn, signInWithGoogle, resetPassword, loading, setLoading } = useAuth()
   const [showResetModal, setShowResetModal] = useState(false)
   const [resetEmail, setResetEmail] = useState('')
+  const location = useLocation()
+  const from = location?.state || '/';
 
   // 🔹 Handle Email/Password Login
   const handleLogin = async e => {
@@ -22,7 +24,7 @@ const Login = () => {
       setLoading(true)
       await signIn(email, password)
       toast.success('Login Successful!')
-      navigate('/')
+      navigate(from)
     } catch (err) {
       console.log(err)
       toast.error(err.message)
@@ -37,7 +39,7 @@ const Login = () => {
       setLoading(true)
       await signInWithGoogle()
       toast.success('Logged in with Google!')
-      navigate('/')
+         navigate(from)
     } catch (err) {
       console.log(err)
       toast.error(err.message)
