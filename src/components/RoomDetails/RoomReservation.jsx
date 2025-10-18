@@ -26,6 +26,7 @@ const RoomReservation = ({ room }) => {
           onChange={item => setState([item.selection])}
           moveRangeOnFirstSelection={false}
           ranges={state}
+           rangeColors={['#fb7185']}
         />
 
       </div>

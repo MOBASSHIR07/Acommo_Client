@@ -22,7 +22,7 @@ const Card = ({ room }) => {
                 group-hover:scale-110 
                 transition
               '
-            src={room?.image}
+            src={room?.image_url}
             alt='Room'
           />
           <div

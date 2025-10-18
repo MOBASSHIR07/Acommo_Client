@@ -11,12 +11,12 @@ import useAxiosCommon from '../../hooks/useAxiosCommon'
 
 const RoomDetails = () => {
 
-const axiosCommon = useAxiosCommon();
-const {id} = useParams();
+  const axiosCommon = useAxiosCommon();
+  const { id } = useParams();
 
-  const {data:room=[], isLoading} = useQuery({
-    queryKey:['room', id],
-    queryFn : async()=>{
+  const { data: room = [], isLoading } = useQuery({
+    queryKey: ['room', id],
+    queryFn: async () => {
       const res = await axiosCommon.get(`/room/${id}`)
       return res.data;
     }
@@ -38,7 +38,7 @@ const {id} = useParams();
               <div className='w-full md:h-[60vh] overflow-hidden rounded-xl'>
                 <img
                   className='object-cover w-full'
-                  src={room.image}
+                  src={room.image_url}
                   alt='header image'
                 />
               </div>
@@ -58,14 +58,14 @@ const {id} = useParams();
                 gap-2
               '
                 >
-                  <div>Hosted by {room?.host?.name}</div>
+                  <div>Hosted by : {room?.host?.name}</div>
 
                   <img
                     className='rounded-full'
                     height='30'
                     width='30'
                     alt='Avatar'
-                    src={room?.image}
+                    src={room?.host?.photo}
                   />
                 </div>
                 <div
@@ -78,7 +78,8 @@ const {id} = useParams();
                 text-neutral-500
               '
                 >
-                  <div>{room?.guests} guests</div>
+                  <div>{room?.
+                    total_guest} guests</div>
                   <div>{room?.bedrooms} rooms</div>
                   <div>{room?.bathrooms} bathrooms</div>
                 </div>
