@@ -3,16 +3,20 @@ import useAuth from "../../../hooks/useAuth";
 import useAxiosCommon from '../../../hooks/useAxiosCommon';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import { toast } from 'react-hot-toast';
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
 import EditRoomModal from './EditRoomModal';
 import RoomCard from './RoomCard';
+import { FaExclamationTriangle, FaTrash } from 'react-icons/fa';
 
 const MyListings = () => {
     const { user } = useAuth();
     const axiosCommon = useAxiosCommon();
     const queryClient = useQueryClient();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [editingRoom, setEditingRoom] = useState(null);
+    const [deleteRoom, setDeleteRoom] = useState(null);
     const [editFormData, setEditFormData] = useState({});
 
     // Fetch rooms
@@ -33,6 +37,8 @@ const MyListings = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['myRooms', user?.email]);
+            setIsDeleteModalOpen(false);
+            setDeleteRoom(null);
             toast.success('Room deleted successfully!');
         },
         onError: (error) => {
@@ -44,7 +50,12 @@ const MyListings = () => {
     // Update mutation
     const updateMutation = useMutation({
         mutationFn: async ({ roomId, updatedData }) => {
-            const res = await axiosCommon.put(`/room/${roomId}`, updatedData);
+            // Convert price to number before sending to API
+            const dataToSend = {
+                ...updatedData,
+                price: Number(updatedData.price)
+            };
+            const res = await axiosCommon.put(`/room/${roomId}`, dataToSend);
             return res.data;
         },
         onSuccess: () => {
@@ -60,34 +71,53 @@ const MyListings = () => {
         }
     });
 
-    // Handle delete
-    const handleDelete = (roomId) => {
-        if (window.confirm('Are you sure you want to delete this listing?')) {
-            deleteMutation.mutate(roomId);
+    // Calculate statistics
+    const stats = {
+        totalListings: rooms.length,
+        activeListings: rooms.filter(room => room.availability?.startDate).length,
+        totalValue: rooms.reduce((total, room) => total + (Number(room.price) || 0), 0),
+        totalCapacity: rooms.reduce((total, room) => total + (Number(room.total_guest) || 0), 0)
+    };
+
+    // Handle delete start
+    const handleDeleteStart = (room) => {
+        setDeleteRoom(room);
+        setIsDeleteModalOpen(true);
+    };
+
+    // Handle delete confirm
+    const handleDeleteConfirm = () => {
+        if (deleteRoom) {
+            deleteMutation.mutate(deleteRoom._id);
         }
     };
 
+    // Handle delete cancel
+    const handleDeleteCancel = () => {
+        setIsDeleteModalOpen(false);
+        setDeleteRoom(null);
+    };
+
     // Handle edit start
-   // Handle edit start
-const handleEditStart = (room) => {
-  setEditingRoom(room);
-  setEditFormData({
-    title: room.title,
-    location: room.location,
-    category: room.category,
-    price: room.price,
-    total_guest: room.total_guest,
-    bedrooms: room.bedrooms,
-    bathrooms: room.bathrooms,
-    description: room.description,
-    image_url: room.image_url,
-    availability: room.availability || {
-      startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // +7 days
-    }
-  });
-  setIsEditModalOpen(true);
-};
+    const handleEditStart = (room) => {
+        setEditingRoom(room);
+        setEditFormData({
+            title: room.title,
+            location: room.location,
+            category: room.category,
+            price: room.price,
+            total_guest: room.total_guest,
+            bedrooms: room.bedrooms,
+            bathrooms: room.bathrooms,
+            description: room.description,
+            image_url: room.image_url,
+            availability: room.availability || {
+                startDate: new Date().toISOString(),
+                endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+            }
+        });
+        setIsEditModalOpen(true);
+    };
 
     // Handle edit cancel
     const handleEditCancel = () => {
@@ -96,12 +126,18 @@ const handleEditStart = (room) => {
         setEditFormData({});
     };
 
-    // Handle input change
+    // Handle input change - ensure numbers are converted
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        
+        // Convert numeric fields to numbers
+        const processedValue = ['price', 'total_guest', 'bedrooms', 'bathrooms'].includes(name) 
+            ? Number(value) 
+            : value;
+
         setEditFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: processedValue
         }));
     };
 
@@ -127,24 +163,24 @@ const handleEditStart = (room) => {
                     {/* Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-                            <div className="text-2xl font-bold text-rose-500">{rooms.length}</div>
+                            <div className="text-2xl font-bold text-rose-500">{stats.totalListings}</div>
                             <div className="text-gray-600">Total Listings</div>
                         </div>
                         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
                             <div className="text-2xl font-bold text-green-500">
-                                {rooms.filter(room => room.availability?.startDate).length}
+                                {stats.activeListings}
                             </div>
                             <div className="text-gray-600">Active Listings</div>
                         </div>
                         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
                             <div className="text-2xl font-bold text-blue-500">
-                                ${rooms.reduce((total, room) => total + (room.price || 0), 0)}
+                                ${stats.totalValue.toLocaleString()}
                             </div>
                             <div className="text-gray-600">Total Value</div>
                         </div>
                         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
                             <div className="text-2xl font-bold text-purple-500">
-                                {rooms.reduce((total, room) => total + (room.total_guest || 0), 0)}
+                                {stats.totalCapacity}
                             </div>
                             <div className="text-gray-600">Total Capacity</div>
                         </div>
@@ -164,7 +200,7 @@ const handleEditStart = (room) => {
                                     key={room._id}
                                     room={room}
                                     onEdit={handleEditStart}
-                                    onDelete={handleDelete}
+                                    onDelete={handleDeleteStart}
                                     isDeleting={deleteMutation.isLoading}
                                 />
                             ))}
@@ -183,6 +219,81 @@ const handleEditStart = (room) => {
                 onSave={handleSaveEdit}
                 isLoading={updateMutation.isLoading}
             />
+
+            {/* Delete Confirmation Modal */}
+            <Transition appear show={isDeleteModalOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={handleDeleteCancel}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0 bg-black bg-opacity-25" />
+                    </Transition.Child>
+
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="flex-shrink-0">
+                                            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                                <FaExclamationTriangle className="text-red-600 text-xl" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <Dialog.Title as="h3" className="text-lg font-semibold text-gray-900">
+                                                Delete Listing
+                                            </Dialog.Title>
+                                            <p className="text-sm text-gray-500">
+                                                This action cannot be undone
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-4">
+                                        <p className="text-gray-600">
+                                            Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteRoom?.title}</span>? 
+                                            This will permanently remove the listing and all its data.
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-6 flex gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={handleDeleteCancel}
+                                            className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleDeleteConfirm}
+                                            disabled={deleteMutation.isLoading}
+                                            className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                        >
+                                            <FaTrash className="text-sm" />
+                                            {deleteMutation.isLoading ? 'Deleting...' : 'Delete'}
+                                        </button>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
         </>
     );
 };
