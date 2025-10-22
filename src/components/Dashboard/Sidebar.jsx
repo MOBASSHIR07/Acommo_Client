@@ -6,10 +6,13 @@ import { AiOutlineBars } from 'react-icons/ai'
 import { MdHomeWork } from 'react-icons/md'
 import { Link, NavLink } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
+import useRole from '../../hooks/useRole'
 
 const Sidebar = () => {
   const { logOut } = useAuth()
   const [isActive, setActive] = useState(false)
+  const [role , isLoading] = useRole();
+  console.log(role);
 
   const handleToggle = () => setActive(!isActive)
 
@@ -79,10 +82,11 @@ const Sidebar = () => {
 
         {/* Bottom Section */}
         <div className="pt-4 border-t border-gray-200">
+         
           <NavLink to="/dashboard/profile" className={navItemStyle}>
-            <FcSettings className="w-5 h-5" />
-            <span>Profile</span>
-          </NavLink>
+              <FcSettings className="w-5 h-5" />
+              <span>Profile</span>
+            </NavLink>
 
           <button
             onClick={logOut}

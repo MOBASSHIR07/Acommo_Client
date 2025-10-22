@@ -36,10 +36,20 @@ const AuthProvider = ({ children }) => {
     return signInWithPopup(auth, googleProvider)
   }
 
-  const resetPassword = email => {
-    setLoading(true)
+
+  // ✅ CORRECTED CODE IN AuthProvider.jsx
+const resetPassword = email => {
+    setLoading(true) 
+    
+    // Return the promise chain, ensuring .finally runs to stop loading.
     return sendPasswordResetEmail(auth, email)
-  }
+        .finally(() => {
+            // This is CRUCIAL: It stops the global loading state
+            // and allows the Profile component to render.
+            setLoading(false); 
+        })
+}
+
 
   const logOut = async () => {
     setLoading(true)
