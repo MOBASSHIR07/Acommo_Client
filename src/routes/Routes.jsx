@@ -11,6 +11,9 @@ import Statistic from '../pages/Dashboard/Common/Statistic'
 import AddRoom from '../pages/Dashboard/Host/AddRoom'
 import MyListings from '../pages/Dashboard/Host/MyListings'
 import Profile from '../pages/Dashboard/Common/Profile'
+import ManageUsers from '../pages/Dashboard/Admin/ManageUsers '
+import MyBooking from '../pages/Dashboard/Guest/MyBooking '
+import BecomeHost from '../pages/Dashboard/Guest/BecomeHost '
 
 export const router = createBrowserRouter([
   {
@@ -34,27 +37,37 @@ export const router = createBrowserRouter([
   { path: '/signup', element: <SignUp /> },
  {
 
-   path:'/dashboard',
-  element:<DashBoardLayout/>,
-  children:[
+    path: '/dashboard',
+  element: <DashBoardLayout />,
+  children: [
     {
-      index:true,
-      element:<Statistic/>
+      index: true,
+      element: <Statistic />,
     },
     {
-      path:'addroom',
-      element:<AddRoom/>
+      path: 'addroom',
+      element: <AddRoom />, 
     },
     {
-      path:'mylistings',
-      element:<MyListings/>
+      path: 'mylistings',
+      element: <MyListings />, 
     },
     {
-      path:'profile',
-      element:<Profile/>
-    }
-
-
-  ]
+      path: 'manage-users',
+      element: <ManageUsers />, 
+    },
+    {
+      path: 'mybooking',
+      element: <MyBooking />, 
+    },
+    {
+      path: 'become-host',
+      element: <BecomeHost />, 
+    },
+    {
+      path: 'profile',
+      element: <Profile />,
+    },
+  ],
  }
 ])
