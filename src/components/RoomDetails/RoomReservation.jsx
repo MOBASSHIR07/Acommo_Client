@@ -1,16 +1,18 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
 import { DateRange } from "react-date-range";
 import Button from "../Shared/Button/Button";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import { toast } from "react-hot-toast";
+import BookingModal from './BookingModal'
 
 const RoomReservation = ({ room }) => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
 
-  // default date range from room availability
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bookingInfo, setBookingInfo] = useState(null);
+
   const [range, setRange] = useState([
     {
       startDate: new Date(room?.availability?.startDate),
@@ -36,73 +38,69 @@ const RoomReservation = ({ room }) => {
   const calcTotal = () => {
     const start = selectedRange.startDate;
     const end = selectedRange.endDate;
-    const days = Math.max(
-      1,
-      Math.ceil((end - start) / (1000 * 60 * 60 * 24))
-    );
+    const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
     return days * room?.price;
   };
 
-  const handleReserve = async () => {
-    try {
-      const bookingData = {
-        roomId: room._id,
-        guest: {
-          name: user?.displayName,
-          email: user?.email,
-          photo: user?.photoURL,
-        },
-        startDate: selectedRange.startDate,
-        endDate: selectedRange.endDate,
-        totalPrice: calcTotal(),
-      };
+  const handleReserve = () => {
+    if (!user) return toast.error("Please log in to reserve.");
 
-      const res = await axiosSecure.post(`/book-room/${room._id}`, bookingData);
-
-      if (res.data.success) {
-        toast.success("Room booked successfully!");
-      } else {
-        toast.error(res.data.message || "Booking failed!");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong!");
-    }
+    // prepare booking info to show in modal
+    const info = {
+      title: room?.title,
+      location: room?.location,
+      guest: {
+        name: user?.displayName,
+        email: user?.email,
+      },
+      from: selectedRange.startDate,
+      to: selectedRange.endDate,
+      price: calcTotal(),
+    };
+    setBookingInfo(info);
+    setIsModalOpen(true);
   };
 
   return (
-    <div className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-md">
-      <div className="flex items-center gap-1 p-4">
-        <div className="text-2xl font-semibold">$ {room?.price}</div>
-        <div className="font-light text-neutral-600">night</div>
+    <>
+      <div className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-sm">
+        <div className="flex items-center gap-1 p-4">
+          <div className="text-2xl font-semibold">$ {room?.price}</div>
+          <div className="font-light text-neutral-600">/night</div>
+        </div>
+        <hr />
+        <div className="flex justify-center">
+          <DateRange
+            editableDateInputs={true}
+            onChange={handleRangeChange}
+            moveRangeOnFirstSelection={false}
+            ranges={range}
+            rangeColors={["#fb7185"]}
+            minDate={new Date(room?.availability?.startDate)}
+            maxDate={new Date(room?.availability?.endDate)}
+          />
+        </div>
+        <hr />
+        <div className="p-4">
+          <Button label="Reserve" onClick={handleReserve} />
+        </div>
+        <hr />
+        <div className="p-4 flex items-center justify-between font-semibold text-lg">
+          <div>Total</div>
+          <div>${calcTotal()}</div>
+        </div>
       </div>
-      <hr />
-      <div className="flex justify-center">
-        <DateRange
-          editableDateInputs={true}
-          onChange={handleRangeChange}
-          moveRangeOnFirstSelection={false}
-          ranges={range}
-          rangeColors={["#fb7185"]}
-          minDate={new Date(room?.availability?.startDate)}
-          maxDate={new Date(room?.availability?.endDate)}
-        />
-      </div>
-      <hr />
-      <div className="p-4">
-        <Button label={"Reserve"} onClick={handleReserve} />
-      </div>
-      <hr />
-      <div className="p-4 flex items-center justify-between font-semibold text-lg">
-        <div>Total</div>
-        <div>${calcTotal()}</div>
-      </div>
-    </div>
-  );
-};
 
-RoomReservation.propTypes = {
-  room: PropTypes.object,
+      {/* Booking Modal */}
+      {bookingInfo && (
+        <BookingModal
+          isOpen={isModalOpen}
+          closeModal={() => setIsModalOpen(false)}
+          bookingInfo={bookingInfo}
+        />
+      )}
+    </>
+  );
 };
 
 export default RoomReservation;

@@ -1,105 +1,32 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GrLogout } from 'react-icons/gr'
 import { FcSettings } from 'react-icons/fc'
-import { BsFillHouseAddFill, BsGraphUp } from 'react-icons/bs'
 import { AiOutlineBars } from 'react-icons/ai'
-import { MdHomeWork } from 'react-icons/md'
-import { FaUsers } from 'react-icons/fa'
-import { MdHotelClass } from 'react-icons/md'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import useRole from '../../hooks/useRole'
+import Menu from './Menu'
 
 const Sidebar = () => {
   const { logOut } = useAuth()
   const [isActive, setActive] = useState(false)
   const [role, isLoading] = useRole()
-  const [viewMode, setViewMode] = useState('host') // 'host' or 'guest'
+  const [viewMode, setViewMode] = useState('host')
+  const navigate = useNavigate()
 
   const handleToggle = () => setActive(!isActive)
 
-  // active / inactive nav item styles
+ 
+  useEffect(() => {
+    if (!isLoading) navigate('/dashboard')
+  }, [viewMode, isLoading, navigate])
+
   const navItemStyle = ({ isActive }) =>
     `flex items-center gap-3 px-5 py-3 my-1 rounded-lg transition-all duration-300 ${
       isActive
         ? 'bg-gradient-to-r from-rose-400 to-pink-500 text-white shadow-md scale-[1.02]'
         : 'text-gray-600 hover:bg-gray-100 hover:text-rose-500'
     }`
-
-  // role-based menus
-  const renderMenuItems = () => {
-    if (isLoading) return <p className="text-center text-gray-500">Loading...</p>
-
-    // If host is viewing in guest mode
-    if (role === 'host' && viewMode === 'guest') {
-      return (
-        <>
-          <NavLink to="/dashboard" end className={navItemStyle}>
-            <BsGraphUp className="w-5 h-5" />
-            <span>Statistics</span>
-          </NavLink>
-          <NavLink to="mybooking" className={navItemStyle}>
-            <MdHotelClass className="w-5 h-5" />
-            <span>My Booking</span>
-          </NavLink>
-          {/* "Become a Host" is hidden because user is already a host */}
-        </>
-      )
-    }
-
-    // Default role-based menus
-    switch (role) {
-      case 'admin':
-        return (
-          <>
-            <NavLink to="/dashboard" end className={navItemStyle}>
-              <BsGraphUp className="w-5 h-5" />
-              <span>Statistics</span>
-            </NavLink>
-            <NavLink to="manage-users" className={navItemStyle}>
-              <FaUsers className="w-5 h-5" />
-              <span>Manage Users</span>
-            </NavLink>
-          </>
-        )
-
-      case 'host':
-        return (
-          <>
-            <NavLink to="/dashboard" end className={navItemStyle}>
-              <BsGraphUp className="w-5 h-5" />
-              <span>Statistics</span>
-            </NavLink>
-            <NavLink to="addroom" className={navItemStyle}>
-              <BsFillHouseAddFill className="w-5 h-5" />
-              <span>Add Room</span>
-            </NavLink>
-            <NavLink to="mylistings" className={navItemStyle}>
-              <MdHomeWork className="w-5 h-5" />
-              <span>My Hosting</span>
-            </NavLink>
-          </>
-        )
-
-      default: // guest
-        return (
-          <>
-            <NavLink to="/dashboard" end className={navItemStyle}>
-              <BsGraphUp className="w-5 h-5" />
-              <span>Statistics</span>
-            </NavLink>
-            <NavLink to="mybooking" className={navItemStyle}>
-              <MdHotelClass className="w-5 h-5" />
-              <span>My Booking</span>
-            </NavLink>
-            <NavLink to="become-host" className={navItemStyle}>
-              <BsFillHouseAddFill className="w-5 h-5" />
-              <span>Become a Host</span>
-            </NavLink>
-          </>
-        )
-    }
-  }
 
   return (
     <>
@@ -138,7 +65,7 @@ const Sidebar = () => {
             </Link>
           </div>
 
-          {/* Role Toggle for Hosts */}
+          {/* Host View Toggle */}
           {role === 'host' && (
             <div className="mb-6 p-3 bg-gray-50 rounded-xl border border-gray-200">
               <p className="text-xs font-medium text-gray-600 mb-2 text-center">View Mode</p>
@@ -164,17 +91,16 @@ const Sidebar = () => {
                   Host
                 </button>
               </div>
-              <p className="text-xs text-gray-500 text-center mt-2">
-                {viewMode === 'guest' ? 'Guest Features' : 'Host Features'}
-              </p>
             </div>
           )}
 
-          {/* Menu */}
-          <nav className="flex flex-col mt-2">{renderMenuItems()}</nav>
+          {/* Menus */}
+          <nav className="flex flex-col mt-2">
+            {!isLoading && <Menu role={role} viewMode={viewMode} />}
+          </nav>
         </div>
 
-        {/* Bottom Section */}
+        {/* Bottom */}
         <div className="pt-4 border-t border-gray-200">
           <NavLink to="/dashboard/profile" className={navItemStyle}>
             <FcSettings className="w-5 h-5" />
