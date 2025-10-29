@@ -3,6 +3,7 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
 import { toast } from 'react-hot-toast'
 import useAxiosSecure from '../../hooks/useAxiosSecure'
+import { useNavigate } from 'react-router-dom'
 
 const CheckoutForm = ({ bookingInfo, closeModal }) => {
   const stripe = useStripe()
@@ -11,6 +12,7 @@ const CheckoutForm = ({ bookingInfo, closeModal }) => {
   const [error, setError] = useState(null)
   const [processing, setProcessing] = useState(false)
   const [succeeded, setSucceeded] = useState(false)
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -47,6 +49,20 @@ const CheckoutForm = ({ bookingInfo, closeModal }) => {
 
       if (paymentIntent.status === 'succeeded') {
         setSucceeded(true)
+        const paymentInfo = {
+          ...bookingInfo, transactionId:paymentIntent.id,
+          date: new Date(),
+        }
+        try{
+           await axiosSecure.post('/bookings', paymentInfo)
+        }
+        catch(err){
+          console.log(err);
+        }
+        finally{
+           navigate("/dashboard/mybookings");
+        }
+
         toast.success('Payment successful! Booking confirmed.')
         closeModal()
       }

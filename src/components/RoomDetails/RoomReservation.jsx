@@ -1,65 +1,97 @@
 import { useState } from "react";
 import { DateRange } from "react-date-range";
+import { addDays, isWithinInterval } from "date-fns";
 import Button from "../Shared/Button/Button";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import { toast } from "react-hot-toast";
-import BookingModal from './BookingModal'
+import BookingModal from "./BookingModal";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const RoomReservation = ({ room }) => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [bookingInfo, setBookingInfo] = useState(null);
 
+  // --- Fetch bookings for this room ---
+  const { data: bookings = [], isFetching } = useQuery({
+    queryKey: ["bookings", room?._id],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/bookings/${room?._id}`);
+      return res.data;
+    },
+    enabled: !!room?._id,
+  });
+
+  // --- Compute booked date ranges ---
+  const bookedRanges = bookings.map((b) => ({
+    start: new Date(b.from),
+    end: new Date(b.to),
+  }));
+
+  // --- Availability range from room data ---
+  const minDate = new Date(room?.availability?.startDate);
+  const maxDate = new Date(room?.availability?.endDate);
+
   const [range, setRange] = useState([
     {
-      startDate: new Date(room?.availability?.startDate),
-      endDate: new Date(room?.availability?.endDate),
+      startDate: minDate,
+      endDate: minDate,
       key: "selection",
     },
   ]);
 
-  const [selectedRange, setSelectedRange] = useState({
-    startDate: new Date(room?.availability?.startDate),
-    endDate: new Date(room?.availability?.startDate),
-  });
-
   const handleRangeChange = (item) => {
-    setSelectedRange({
-      startDate: item.selection.startDate,
-      endDate: item.selection.endDate,
-    });
     setRange([item.selection]);
   };
 
-  // calculate total nights and price
+
+ 
+
+  const isDateBooked = (date) =>
+    bookedRanges.some((r) =>
+      isWithinInterval(date, { start: r.start, end: r.end })
+    );
+
   const calcTotal = () => {
-    const start = selectedRange.startDate;
-    const end = selectedRange.endDate;
-    const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
+    const { startDate, endDate } = range[0];
+    const days = Math.max(1, Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)));
     return days * room?.price;
   };
 
   const handleReserve = () => {
     if (!user) return toast.error("Please log in to reserve.");
 
-    // prepare booking info to show in modal
     const info = {
+      roomId: room?._id,
       title: room?.title,
       location: room?.location,
       guest: {
         name: user?.displayName,
         email: user?.email,
       },
-      from: selectedRange.startDate,
-      to: selectedRange.endDate,
+      from: range[0].startDate,
+      to: range[0].endDate,
       price: calcTotal(),
     };
+
     setBookingInfo(info);
     setIsModalOpen(true);
   };
+
+  // --- Disable all dates if fully booked ---
+  const allDatesBooked = (() => {
+    const allDates = [];
+    let current = new Date(minDate);
+    while (current <= maxDate) {
+      allDates.push(new Date(current));
+      current = addDays(current, 1);
+    }
+    return allDates.every(isDateBooked);
+  })();
 
   return (
     <>
@@ -70,19 +102,36 @@ const RoomReservation = ({ room }) => {
         </div>
         <hr />
         <div className="flex justify-center">
-          <DateRange
-            editableDateInputs={true}
-            onChange={handleRangeChange}
-            moveRangeOnFirstSelection={false}
-            ranges={range}
-            rangeColors={["#fb7185"]}
-            minDate={new Date(room?.availability?.startDate)}
-            maxDate={new Date(room?.availability?.endDate)}
-          />
+          {!isFetching ? (
+            <DateRange
+              editableDateInputs={true}
+              onChange={handleRangeChange}
+              moveRangeOnFirstSelection={false}
+              ranges={range}
+              rangeColors={["#fb7185"]}
+              minDate={minDate}
+              maxDate={maxDate}
+              disabledDates={(() => {
+                const dates = [];
+                let current = new Date(minDate);
+                while (current <= maxDate) {
+                  if (isDateBooked(current)) dates.push(new Date(current));
+                  current = addDays(current, 1);
+                }
+                return dates;
+              })()}// Immediately Invoked Function Expression (IIFE). called by ()
+            />
+          ) : (
+            <p className="text-gray-500 py-6">Loading calendar...</p>
+          )}
         </div>
         <hr />
         <div className="p-4">
-          <Button label="Reserve" onClick={handleReserve} />
+          <Button
+            label={allDatesBooked ? "Fully Booked" : "Reserve"}
+            onClick={handleReserve}
+            disabled={allDatesBooked}
+          />
         </div>
         <hr />
         <div className="p-4 flex items-center justify-between font-semibold text-lg">
@@ -97,6 +146,12 @@ const RoomReservation = ({ room }) => {
           isOpen={isModalOpen}
           closeModal={() => setIsModalOpen(false)}
           bookingInfo={bookingInfo}
+          onBookingSuccess={() => {
+            // ✅ Immediately refetch bookings
+            queryClient.invalidateQueries(["bookings", room?._id]);
+            toast.success("Booking successful!");
+            setIsModalOpen(false);
+          }}
         />
       )}
     </>
