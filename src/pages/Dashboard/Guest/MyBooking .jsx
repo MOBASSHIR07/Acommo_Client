@@ -1,23 +1,24 @@
-import { useQuery } from '@tanstack/react-query'
-import useAxiosSecure from '../../../hooks/useAxiosSecure'
-import useAuth from '../../../hooks/useAuth'
-import LoadingSpinner from '../../../components/Shared/LoadingSpinner'
-import { FaHome, FaUser, FaDollarSign, FaCalendarAlt, FaEye } from 'react-icons/fa'
+import { useQuery } from '@tanstack/react-query';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import useAuth from '../../../hooks/useAuth';
+import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
+import { FaCalendarAlt } from 'react-icons/fa';
+import BookingDataRow from './BookingDataRow';
 
 const MyBooking = () => {
-  const axiosSecure = useAxiosSecure()
-  const { user } = useAuth()
+  const axiosSecure = useAxiosSecure();
+  const { user } = useAuth();
 
   const { data: bookings = [], isLoading, refetch } = useQuery({
     queryKey: ['bookings', user?.email],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/bookings?email=${user?.email}`)
-      return res.data
+      const res = await axiosSecure.get(`/bookings?email=${user?.email}`);
+      return res.data;
     },
     enabled: !!user?.email
-  })
+  });
 
-  if (isLoading) return <LoadingSpinner/>
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -36,59 +37,15 @@ const MyBooking = () => {
         </div>
 
         {/* Stats Card */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Bookings</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">
-                  {bookings.length}
-                </p>
+                <p className="text-3xl font-bold text-gray-900 mt-1">{bookings.length}</p>
               </div>
               <div className="p-3 bg-blue-50 rounded-xl">
                 <FaCalendarAlt className="w-6 h-6 text-blue-500" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Active</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">
-                  {bookings.filter(b => b.status === 'confirmed').length}
-                </p>
-              </div>
-              <div className="p-3 bg-green-50 rounded-xl">
-                <FaHome className="w-6 h-6 text-green-500" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">
-                  {bookings.filter(b => b.status === 'pending').length}
-                </p>
-              </div>
-              <div className="p-3 bg-yellow-50 rounded-xl">
-                <FaCalendarAlt className="w-6 h-6 text-yellow-500" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Spent</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">
-                  ${bookings.reduce((total, b) => total + (b.price || 0), 0)}
-                </p>
-              </div>
-              <div className="p-3 bg-purple-50 rounded-xl">
-                <FaDollarSign className="w-6 h-6 text-purple-500" />
               </div>
             </div>
           </div>
@@ -98,9 +55,7 @@ const MyBooking = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-6 py-5 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Booking History
-              </h2>
+              <h2 className="text-xl font-semibold text-gray-900">Booking History</h2>
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <FaCalendarAlt className="w-4 h-4" />
                 <span>{bookings.length} bookings</span>
@@ -124,9 +79,6 @@ const MyBooking = () => {
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Dates
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
                   <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
@@ -135,15 +87,11 @@ const MyBooking = () => {
               <tbody className="divide-y divide-gray-200">
                 {bookings.length > 0 ? (
                   bookings.map((booking) => (
-                    <BookingDataRow
-                      key={booking._id}
-                      booking={booking}
-                      refetch={refetch}
-                    />
+                    <BookingDataRow key={booking._id} booking={booking} refetch={refetch} />
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="px-6 py-12 text-center">
+                    <td colSpan="5" className="px-6 py-12 text-center">
                       <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <FaCalendarAlt className="w-8 h-8 text-gray-400" />
                       </div>
@@ -158,7 +106,7 @@ const MyBooking = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MyBooking
+export default MyBooking;

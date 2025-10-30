@@ -60,7 +60,7 @@ const CheckoutForm = ({ bookingInfo, closeModal }) => {
           console.log(err);
         }
         finally{
-           navigate("/dashboard/mybookings");
+           navigate("/dashboard/mybooking");
         }
 
         toast.success('Payment successful! Booking confirmed.')

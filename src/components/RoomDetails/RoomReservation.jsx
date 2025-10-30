@@ -51,10 +51,24 @@ const RoomReservation = ({ room }) => {
 
  
 
-  const isDateBooked = (date) =>
-    bookedRanges.some((r) =>
-      isWithinInterval(date, { start: r.start, end: r.end })
-    );
+  // const isDateBooked = (date) =>
+  //   bookedRanges.some((r) =>
+  //     isWithinInterval(date, { start: r.start, end: r.end })
+  //   );
+    const isDateBooked = (date) =>
+  bookedRanges.some(({ start, end }) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0); // current date at midnight
+
+    const s = new Date(start);
+    s.setHours(0, 0, 0, 0); // booking start at midnight
+
+    const e = new Date(end);
+    e.setHours(23, 59, 59, 999); // booking end at end of day
+
+    return d >= s && d <= e;
+  });
+
 
   const calcTotal = () => {
     const { startDate, endDate } = range[0];
