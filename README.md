@@ -14,6 +14,117 @@ The core architectural strength lies in its **Role-Based Access Control (RBAC)**
 
 ---
 
+## 📁 Project Structure
+
+```
+├── .eslintrc.cjs
+├── .firebase
+│   └── hosting.ZGlzdA.cache
+├── .firebaserc
+├── .gitignore
+├── README.md
+├── firebase.json
+├── index.html
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── public
+│   ├── favicon.png
+│   ├── rooms.json
+│   └── vite.svg
+├── src
+│   ├── api
+│   │   └── utils
+│   │       └── index.js
+│   ├── assets
+│   │   └── images
+│   │       ├── logo.png
+│   │       └── placeholder.jpg
+│   ├── components
+│   │   ├── Categories
+│   │   │   ├── Categories.jsx
+│   │   │   ├── CategoriesData.js
+│   │   │   └── CategoryBox.jsx
+│   │   ├── Dashboard
+│   │   │   ├── Menu.jsx
+│   │   │   └── Sidebar.jsx
+│   │   ├── Form
+│   │   │   ├── AddRoomForm.jsx
+│   │   │   └── CheckoutForm.jsx
+│   │   ├── Home
+│   │   │   ├── Card.jsx
+│   │   │   └── Rooms.jsx
+│   │   ├── Modal
+│   │   │   └── HostRequestModal.jsx
+│   │   ├── RoomDetails
+│   │   │   ├── BookingModal.jsx
+│   │   │   └── RoomReservation.jsx
+│   │   └── Shared
+│   │       ├── Button
+│   │       │   └── Button.jsx
+│   │       ├── Container.jsx
+│   │       ├── EmptyState.jsx
+│   │       ├── Footer
+│   │       │   └── Footer.jsx
+│   │       ├── Heading.jsx
+│   │       ├── LoadingSpinner.jsx
+│   │       └── Navbar
+│   │           └── Navbar.jsx
+│   ├── firebase
+│   │   └── firebase.config.js
+│   ├── hooks
+│   │   ├── useAuth.js
+│   │   ├── useAxiosCommon.jsx
+│   │   ├── useAxiosSecure.jsx
+│   │   └── useRole.js
+│   ├── index.css
+│   ├── layouts
+│   │   ├── DashBoardLayout.jsx
+│   │   └── Main.jsx
+│   ├── main.jsx
+│   ├── pages
+│   │   ├── Dashboard
+│   │   │   ├── Admin
+│   │   │   │   ├── AdminStatistic.jsx
+│   │   │   │   └── ManageUsers.jsx
+│   │   │   ├── Common
+│   │   │   │   ├── ChangePasswordModal.jsx
+│   │   │   │   ├── Profile.jsx
+│   │   │   │   ├── Statistic.jsx
+│   │   │   │   └── UpdateProfileModal.jsx
+│   │   │   ├── Guest
+│   │   │   │   ├── BecomeHost.jsx
+│   │   │   │   ├── BookingDataRow.jsx
+│   │   │   │   ├── GuestStatistic.jsx
+│   │   │   │   └── MyBooking.jsx
+│   │   │   └── Host
+│   │   │       ├── AddRoom.jsx
+│   │   │       ├── EditRoomModal.jsx
+│   │   │       ├── HostStatistic.jsx
+│   │   │       ├── ManageBooking.jsx
+│   │   │       ├── MyListings.jsx
+│   │   │       └── RoomCard.jsx
+│   │   ├── ErrorPage.jsx
+│   │   ├── Home
+│   │   │   └── Home.jsx
+│   │   ├── Login
+│   │   │   └── Login.jsx
+│   │   ├── RoomDetails
+│   │   │   └── RoomDetails.jsx
+│   │   └── SignUp
+│   │       └── SignUp.jsx
+│   ├── providers
+│   │   └── AuthProvider.jsx
+│   └── routes
+│       ├── AdminRoute.jsx
+│       ├── HostRoute.jsx
+│       ├── PrivateRoute.jsx
+│       └── Routes.jsx
+├── tailwind.config.js
+└── vite.config.js
+```
+
+
 ## 2. Core Technology Stack
 
 | **Category** | **Technology** | **Version / Tool** | **Purpose** |
