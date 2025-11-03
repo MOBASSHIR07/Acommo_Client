@@ -8,10 +8,11 @@ import { Dialog, Transition } from '@headlessui/react';
 import EditRoomModal from './EditRoomModal';
 import RoomCard from './RoomCard';
 import { FaExclamationTriangle, FaTrash } from 'react-icons/fa';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 
 const MyListings = () => {
     const { user } = useAuth();
-    const axiosCommon = useAxiosCommon();
+    const axiosSecure = useAxiosSecure()
     const queryClient = useQueryClient();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -23,7 +24,7 @@ const MyListings = () => {
     const { data: rooms = [], isLoading } = useQuery({
         queryKey: ['myRooms', user?.email],
         queryFn: async () => {
-            const res = await axiosCommon.get(`/my-rooms/${user?.email}`);
+            const res = await axiosSecure.get(`/my-rooms/${user?.email}`);
             return res.data;
         },
         enabled: !!user?.email
@@ -32,7 +33,7 @@ const MyListings = () => {
     // Delete mutation
     const deleteMutation = useMutation({
         mutationFn: async (roomId) => {
-            const res = await axiosCommon.delete(`/room/${roomId}`);
+            const res = await axiosSecure.delete(`/room/${roomId}`);
             return res.data;
         },
         onSuccess: () => {
@@ -55,7 +56,7 @@ const MyListings = () => {
                 ...updatedData,
                 price: Number(updatedData.price)
             };
-            const res = await axiosCommon.put(`/room/${roomId}`, dataToSend);
+            const res = await axiosSecure.put(`/room/${roomId}`, dataToSend);
             return res.data;
         },
         onSuccess: () => {

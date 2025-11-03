@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { GrLogout } from 'react-icons/gr'
 import { FcSettings } from 'react-icons/fc'
 import { AiOutlineBars } from 'react-icons/ai'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import useRole from '../../hooks/useRole'
 import Menu from './Menu'
@@ -11,15 +11,29 @@ const Sidebar = () => {
   const { logOut } = useAuth()
   const [isActive, setActive] = useState(false)
   const [role, isLoading] = useRole()
-  const [viewMode, setViewMode] = useState('host')
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Get viewMode from URL or default to 'host'
+  const getViewModeFromURL = () => {
+    const params = new URLSearchParams(location.search)
+    return params.get('view') || 'host'
+  }
+
+  const [viewMode, setViewMode] = useState(getViewModeFromURL())
 
   const handleToggle = () => setActive(!isActive)
 
- 
+  // Update viewMode when URL changes
   useEffect(() => {
-    if (!isLoading) navigate('/dashboard')
-  }, [viewMode, isLoading, navigate])
+    setViewMode(getViewModeFromURL())
+  }, [location.search])
+
+  const handleViewModeChange = (mode) => {
+    setViewMode(mode)
+    // Update URL with the new view mode
+    navigate(`/dashboard?view=${mode}`)
+  }
 
   const navItemStyle = ({ isActive }) =>
     `flex items-center gap-3 px-5 py-3 my-1 rounded-lg transition-all duration-300 ${
@@ -71,7 +85,7 @@ const Sidebar = () => {
               <p className="text-xs font-medium text-gray-600 mb-2 text-center">View Mode</p>
               <div className="flex bg-white rounded-lg p-1 shadow-sm border border-gray-200">
                 <button
-                  onClick={() => setViewMode('guest')}
+                  onClick={() => handleViewModeChange('guest')}
                   className={`flex-1 py-2 px-3 text-xs font-medium rounded-md transition-all duration-200 ${
                     viewMode === 'guest'
                       ? 'bg-rose-50 text-rose-600 shadow-sm border border-rose-200'
@@ -81,7 +95,7 @@ const Sidebar = () => {
                   Guest
                 </button>
                 <button
-                  onClick={() => setViewMode('host')}
+                  onClick={() => handleViewModeChange('host')}
                   className={`flex-1 py-2 px-3 text-xs font-medium rounded-md transition-all duration-200 ${
                     viewMode === 'host'
                       ? 'bg-rose-50 text-rose-600 shadow-sm border border-rose-200'
