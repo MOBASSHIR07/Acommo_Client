@@ -99,8 +99,8 @@ const ManageUsers = () => {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 bg-rose-100 rounded-2xl">
-              <FaUsers className="text-2xl text-rose-600" />
+            <div className="p-3 bg-[#FFF0EF] rounded-2xl">
+              <FaUsers className="text-2xl text-rose-500" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
@@ -260,8 +260,8 @@ const ManageUsers = () => {
                   <tr key={user._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-rose-100 to-pink-200 rounded-full flex items-center justify-center shadow-sm">
-                          <span className="text-rose-600 font-semibold text-sm">
+                        <div className="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center shadow-sm">
+                          <span className="text-white font-semibold text-sm">
                             {user.email.charAt(0).toUpperCase()}
                           </span>
                         </div>

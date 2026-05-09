@@ -9,27 +9,38 @@ const CategoryBox = ({ label, icon: Icon }) => {
 
   const navigate = useNavigate()
   const handleClick = ()=>{
-    let currentQuery = {category:label};
+    let currentQuery = label === 'All' ? {} : {category:label};
     const url = queryString.stringifyUrl({
       url:'/',
       query:currentQuery
     })
-    console.log(url);
     navigate(url)
-
   }
+
+  // If no category is in the URL, "All" should be selected.
+  // Otherwise, the selected category should match the label.
+  const selected = label === 'All' ? !category : category === label;
+
   return (
-    <div onClick={handleClick}
-      className={`flex 
-  flex-col 
-  items-center 
-  justify-center 
-  gap-2
-  p-3
-  border-b-2
-  hover:text-neutral-800
-  transition
-  cursor-pointer ${category===label ? 'border-b-neutral-950 text-neutral-600':''}`}
+    <div
+      onClick={handleClick}
+      className={`
+        flex 
+        flex-col 
+        items-center 
+        justify-center 
+        gap-2
+        p-3
+        border-b-2
+        hover:text-[#E84750]
+        transition
+        cursor-pointer
+        ${
+          selected
+            ? 'border-[#E84750] text-[#E84750]'
+            : 'border-transparent text-haven-tertiary'
+        }
+      `}
     >
       <Icon size={26} />
       <div className='text-sm font-medium'>{label}</div>

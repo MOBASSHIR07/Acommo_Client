@@ -13,13 +13,14 @@ const Button = ({ label, onClick, disabled, outline, small, icon: Icon }) => {
           transition
           px-4
           w-full
-          ${outline ? 'bg-white' : 'bg-rose-500'}
-          ${outline ? 'border-black' : 'border-rose-500'}
-          ${outline ? 'text-black' : 'text-white'}
-          ${small ? 'text-sm' : 'text-md'}
-          ${small ? 'py-1' : 'py-3'}
-          ${small ? 'font-light' : 'font-semibold'}
-          ${small ? 'border-[1px]' : 'border-2'}
+          ${outline ? 'bg-white' : 'bg-gradient-to-r from-rose-400 to-pink-500 shadow-xl shadow-rose-500/25'}
+          ${outline ? 'border-rose-500' : 'border-none'}
+          ${outline ? 'text-rose-500' : 'text-white'}
+          ${small ? 'text-xs' : 'text-sm'}
+          ${small ? 'py-2 px-4' : 'py-4 px-8'}
+          ${small ? 'font-bold uppercase tracking-wider' : 'font-bold uppercase tracking-widest'}
+          ${small ? 'border-[1px]' : 'border-0'}
+          rounded-xl hover:scale-105 active:scale-95 transition-all duration-300
         `}
     >
       {Icon && (

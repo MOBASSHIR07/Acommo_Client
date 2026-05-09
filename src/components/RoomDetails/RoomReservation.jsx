@@ -109,12 +109,12 @@ const RoomReservation = ({ room }) => {
 
   return (
     <>
-      <div className="rounded-xl border border-neutral-200 overflow-hidden bg-white shadow-sm">
-        <div className="flex items-center gap-1 p-4">
-          <div className="text-2xl font-semibold">$ {room?.price}</div>
-          <div className="font-light text-neutral-600">/night</div>
+      <div className="rounded-2xl border border-[#EAD3D2] overflow-hidden bg-white shadow-xl shadow-rose-500/5">
+        <div className="flex items-center gap-1 p-4 text-[#261817]">
+          <div className="text-2xl font-bold">$ {room?.price}</div>
+          <div className="font-medium text-[#59413F]">/night</div>
         </div>
-        <hr />
+        <hr className="border-[#EAD3D2]" />
         <div className="flex justify-center">
           {!isFetching ? (
             <DateRange
@@ -139,7 +139,7 @@ const RoomReservation = ({ room }) => {
             <p className="text-gray-500 py-6">Loading calendar...</p>
           )}
         </div>
-        <hr />
+        <hr className="border-[#EAD3D2]" />
         <div className="p-4">
           <Button
             label={allDatesBooked ? "Fully Booked" : "Reserve"}
@@ -147,8 +147,8 @@ const RoomReservation = ({ room }) => {
             disabled={allDatesBooked}
           />
         </div>
-        <hr />
-        <div className="p-4 flex items-center justify-between font-semibold text-lg">
+        <hr className="border-[#EAD3D2]" />
+        <div className="p-4 flex items-center justify-between font-bold text-lg text-[#261817] bg-[#FFF0EF]/30">
           <div>Total</div>
           <div>${calcTotal()}</div>
         </div>

@@ -242,7 +242,7 @@ const GuestStatistic = () => {
                   showSelectionPreview={false}
                   showDateDisplay={true}
                   showMonthAndYearPickers={false}
-                  rangeColors={["#3b82f6"]}
+                  rangeColors={["#fb7185"]}
                   disabled={true}
                   className="w-full max-w-xs"
                   dateDisplayFormat="MMMM d, yyyy"

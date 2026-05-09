@@ -192,7 +192,7 @@ const HostStatistic = () => {
                   <Line
                     type="monotone"
                     dataKey="bookings"
-                    stroke="#f59e0b"
+                    stroke="#f43f5e"
                     strokeWidth={3}
                     dot={{ r: 4 }}
                     activeDot={{ r: 6 }}
@@ -242,7 +242,7 @@ const HostStatistic = () => {
                   showSelectionPreview={false}
                   showDateDisplay={true}
                   showMonthAndYearPickers={false}
-                  rangeColors={["#f59e0b"]}
+                  rangeColors={["#fb7185"]}
                   disabled={true}
                   className="w-full max-w-xs"
                   dateDisplayFormat="MMMM d, yyyy"

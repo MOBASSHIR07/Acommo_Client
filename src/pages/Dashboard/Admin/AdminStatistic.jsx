@@ -225,7 +225,7 @@ const AdminStatistic = () => {
                   showSelectionPreview={false}
                   showDateDisplay={true}
                   showMonthAndYearPickers={false}
-                  rangeColors={["#f43f5e"]}
+                  rangeColors={["#fb7185"]}
                   disabled={true}
                   className="w-full max-w-xs"
                   dateDisplayFormat="MMMM d, yyyy"

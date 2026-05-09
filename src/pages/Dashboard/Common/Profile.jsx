@@ -49,15 +49,15 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-[#FFF0EF]/30 py-8 px-4">
       <Helmet>
         <title>Profile - Acommo</title>
       </Helmet>
 
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-[#EAD3D2] overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-rose-500 to-pink-600 h-32 relative">
+          <div className="bg-[#FFE9E7] h-32 relative border-b border-[#EAD3D2]">
             <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
               <img
                 alt="profile"
@@ -70,33 +70,33 @@ const Profile = () => {
           {/* Profile Info */}
           <div className="pt-20 pb-8 px-8 text-center">
             <div className="mb-2">
-              <span className="inline-block px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm font-medium">
+              <span className="inline-block px-3 py-1 bg-[#FFF0EF] text-rose-500 border border-[#EAD3D2] rounded-full text-xs font-bold uppercase tracking-wider">
                 {role?.toUpperCase() || 'GUEST'}
               </span>
             </div>
 
-            <h1 className="text-2xl font-semibold text-gray-800 mb-2">
+            <h1 className="text-2xl font-bold text-[#261817] mb-2 uppercase tracking-tight">
               {user?.displayName || 'Unnamed User'}
             </h1>
-            <p className="text-gray-600 flex items-center justify-center gap-2">
+            <p className="text-[#59413F] flex items-center justify-center gap-2 font-medium">
               <FaEnvelope className="text-rose-500" />
               {user?.email}
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
               <button
                 onClick={() => setIsEditModalOpen(true)}
-                className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+                className="group flex items-center justify-center gap-3 bg-gradient-to-r from-rose-400 to-pink-500 text-white px-10 py-4 rounded-xl font-bold uppercase text-xs tracking-widest transition-all shadow-xl shadow-rose-500/25 hover:shadow-rose-500/40 hover:scale-105 active:scale-95"
               >
-                <FaEdit />
+                <FaEdit className="w-4 h-4" />
                 Edit Profile
               </button>
               <button
                 onClick={() => setIsPasswordModalOpen(true)}
-                className="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-xl font-medium transition-colors"
+                className="group flex items-center justify-center gap-3 bg-white border-2 border-[#EAD3D2] text-rose-500 hover:bg-[#FFF0EF] px-10 py-4 rounded-xl font-bold uppercase text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-lg shadow-black/5"
               >
-                <FaLock />
+                <FaLock className="w-4 h-4" />
                 Change Password
               </button>
             </div>

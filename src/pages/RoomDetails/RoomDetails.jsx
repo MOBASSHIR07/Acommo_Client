@@ -58,7 +58,7 @@ const RoomDetails = () => {
                 gap-2
               '
                 >
-                  <div>Hosted by : {room?.host?.name}</div>
+                  <div className="text-[#261817]">Hosted by : {room?.host?.name}</div>
 
                   <img
                     className='rounded-full'
@@ -75,7 +75,7 @@ const RoomDetails = () => {
                 items-center 
                 gap-4 
                 font-light
-                text-neutral-500
+                text-[#59413F]
               '
                 >
                   <div>{room?.
@@ -88,7 +88,7 @@ const RoomDetails = () => {
               <hr />
               <div
                 className='
-          text-lg font-light text-neutral-500'
+          text-lg font-light text-[#59413F]'
               >
                 {room?.description}
               </div>

@@ -50,10 +50,10 @@ const UpdateProfileModal = ({ isOpen, closeModal, user, onSave }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-3xl bg-white p-8 text-left align-middle shadow-2xl transition-all border border-rose-100">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[2rem] bg-white p-10 text-left align-middle shadow-2xl transition-all border border-[#EAD3D2]">
                 <Dialog.Title
                   as="h3"
-                  className="text-2xl font-bold text-center bg-gradient-to-r from-rose-600 to-pink-700 bg-clip-text text-transparent mb-6"
+                  className="text-2xl font-black text-center text-rose-500 uppercase tracking-tighter mb-8"
                 >
                   Update Profile
                 </Dialog.Title>
@@ -67,7 +67,7 @@ const UpdateProfileModal = ({ isOpen, closeModal, user, onSave }) => {
                       type="text"
                       value={name}
                       onChange={e => setName(e.target.value)}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-100 transition-all duration-300"
+                      className="w-full px-4 py-4 border-2 border-[#EAD3D2] rounded-2xl focus:outline-none focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all duration-300 font-medium text-[#261817]"
                       required
                     />
                   </div>
@@ -80,7 +80,7 @@ const UpdateProfileModal = ({ isOpen, closeModal, user, onSave }) => {
                       type="file"
                       accept="image/*"
                       onChange={e => setPhoto(e.target.files[0])}
-                      className="w-full text-sm border-2 border-gray-200 rounded-2xl p-3 focus:outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-100 transition-all duration-300"
+                      className="w-full text-sm border-2 border-[#EAD3D2] rounded-2xl p-3 focus:outline-none focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all duration-300"
                     />
                   </div>
 
@@ -88,14 +88,14 @@ const UpdateProfileModal = ({ isOpen, closeModal, user, onSave }) => {
                     <button
                       type="button"
                       onClick={closeModal}
-                      className="flex-1 py-3 px-6 bg-gray-200 text-gray-700 rounded-2xl hover:bg-gray-300 transition-colors duration-300 font-semibold"
+                      className="flex-1 py-4 px-6 bg-[#FFF0EF] text-rose-500 rounded-xl hover:bg-[#EAD3D2]/50 transition-all duration-300 font-bold uppercase text-xs tracking-widest border border-[#EAD3D2]"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={updating}
-                      className="flex-1 py-3 px-6 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-2xl hover:from-rose-600 hover:to-pink-700 transition-all duration-300 font-semibold disabled:opacity-50"
+                      className="flex-1 py-4 px-6 bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-xl hover:scale-105 active:scale-95 transition-all duration-300 font-bold uppercase text-xs tracking-widest shadow-lg shadow-rose-500/25 disabled:opacity-50"
                     >
                       {updating ? 'Updating...' : 'Save Changes'}
                     </button>

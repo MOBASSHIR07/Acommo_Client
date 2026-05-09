@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import useAuth from '../../../hooks/useAuth'
 import useAxiosSecure from '../../../hooks/useAxiosSecure'
+import { BsFillHouseAddFill } from 'react-icons/bs'
 
 const BecomeHost = () => {
   const { user } = useAuth()
@@ -36,20 +37,23 @@ const BecomeHost = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full text-center">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#FFF0EF]/30 p-4">
+      <div className="bg-white rounded-3xl shadow-sm border border-[#EAD3D2] p-10 max-w-md w-full text-center">
+        <div className="w-20 h-20 bg-rose-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-rose-500">
+          <BsFillHouseAddFill size={40} />
+        </div>
+        <h2 className="text-3xl font-black text-[#261817] mb-3 uppercase tracking-tighter">
           Become a Host
         </h2>
-        <p className="text-gray-600 mb-6">
-          Submit a request to become a host. Admin will review and approve your request.
+        <p className="text-[#59413F] mb-8 font-medium leading-relaxed">
+          Unlock your potential as a host. Submit your request today and our team will review it shortly.
         </p>
         <button
           onClick={handleBecomeHost}
           disabled={isSubmitting}
-          className="px-6 py-3 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white px-8 py-4 rounded-xl font-bold uppercase text-xs tracking-widest transition-all shadow-xl shadow-rose-500/25 hover:shadow-rose-500/40 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? 'Submitting...' : 'Request to Become Host'}
+          {isSubmitting ? 'Submitting...' : 'Send Request'}
         </button>
       </div>
     </div>

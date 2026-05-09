@@ -1,4 +1,5 @@
 import { TbBeach, TbMountain, TbPool } from 'react-icons/tb'
+import { MdOutlineApps } from 'react-icons/md'
 import {
   GiBarn,
   GiBoatFishing,
@@ -15,6 +16,11 @@ import { IoDiamond } from 'react-icons/io5'
 import { MdOutlineVilla } from 'react-icons/md'
 
 export const categories = [
+  {
+    label: 'All',
+    icon: MdOutlineApps,
+    description: 'Show all properties!',
+  },
   {
     label: 'Beach',
     icon: TbBeach,
