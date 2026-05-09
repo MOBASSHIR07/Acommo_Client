@@ -8,17 +8,22 @@ import {
     FaBath,
     FaUpload,
     FaCalendarAlt,
-    FaStar
+    FaStar,
+    FaCheckCircle,
+    FaArrowRight,
+    FaArrowLeft
 } from 'react-icons/fa'
-import { FiHome, FiCamera } from 'react-icons/fi'
+import { FiHome, FiCamera, FiInfo } from 'react-icons/fi'
 import { DateRange } from 'react-date-range'
 import 'react-date-range/dist/styles.css'
 import 'react-date-range/dist/theme/default.css'
 import { useState } from 'react'
 import { TbFidgetSpinner } from 'react-icons/tb'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const AddRoomForm = ({ handleDates, dates, handleSubmit, loading }) => {
     const [previewImage, setPreviewImage] = useState(null)
+    const [selectedCategory, setSelectedCategory] = useState('')
 
     const handleImageChange = (e) => {
         const file = e.target.files[0]
@@ -26,311 +31,174 @@ const AddRoomForm = ({ handleDates, dates, handleSubmit, loading }) => {
             setPreviewImage(URL.createObjectURL(file))
         }
     }
+
     return (
-        <div className='min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-rose-50 py-8 px-4'>
+        <div className='min-h-screen bg-[#FFF0EF]/30 py-12 px-4 font-sans selection:bg-rose-100'>
             <div className='max-w-6xl mx-auto'>
                 {/* Header */}
                 <div className='text-center mb-12'>
-                    <div className='inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-rose-500 to-pink-600 rounded-2xl shadow-lg mb-4'>
-                        <FiHome className='text-3xl text-white' />
+                    <div className='inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-rose-400 to-pink-500 rounded-2xl shadow-lg shadow-rose-500/20 mb-4'>
+                        <FiHome className='text-2xl text-white' />
                     </div>
-                    <h1 className='text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-700 bg-clip-text text-transparent mb-3'>
-                        List Your Space
+                    <h1 className='text-4xl font-black text-[#261817] uppercase tracking-tighter mb-2'>
+                        List Your Property
                     </h1>
-                    <p className='text-gray-600 text-lg max-w-2xl mx-auto'>
-                        Share your unique space with travelers worldwide and start earning
-                        today
+                    <p className='text-[#59413F]/60 font-medium'>
+                        Showcase your architectural masterpiece to the world.
                     </p>
                 </div>
 
-                {/* Main Card */}
-                <div className='bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/60 overflow-hidden'>
-                    {/* Progress Bar */}
-                    <div className='bg-gradient-to-r from-rose-500 to-pink-600 p-1'>
-                        <div className='h-1 bg-white/30 rounded-full'>
-                            <div className='h-full bg-white w-1/3 rounded-full transition-all duration-500'></div>
+                <form onSubmit={handleSubmit} className='grid grid-cols-1 lg:grid-cols-12 gap-8'>
+                    {/* Left Column: Core Details */}
+                    <div className='lg:col-span-7 space-y-6'>
+                        <div className='bg-white/80 backdrop-blur-xl rounded-[32px] p-8 shadow-sm border border-white/50 space-y-6'>
+                            <h2 className='text-xl font-black text-[#261817] uppercase tracking-tight flex items-center gap-2'>
+                                <FiInfo className='text-rose-500' />
+                                Essential Details
+                            </h2>
+
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                                <div className='space-y-2'>
+                                    <label className='text-[10px] font-black text-rose-500 uppercase tracking-widest ml-1'>Property Title</label>
+                                    <input required name='title' placeholder='The Glass House' className='w-full px-5 py-4 bg-white border-2 border-rose-50 rounded-2xl focus:outline-none focus:border-rose-400 transition-all placeholder:text-rose-200 font-medium' />
+                                </div>
+                                <div className='space-y-2'>
+                                    <label className='text-[10px] font-black text-rose-500 uppercase tracking-widest ml-1'>Location</label>
+                                    <div className='relative'>
+                                        <FaMapMarkerAlt className='absolute left-5 top-1/2 -translate-y-1/2 text-rose-300' />
+                                        <input required name='location' placeholder='California, USA' className='w-full pl-12 pr-5 py-4 bg-white border-2 border-rose-50 rounded-2xl focus:outline-none focus:border-rose-400 transition-all placeholder:text-rose-200 font-medium' />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='space-y-3'>
+                                <label className='text-[10px] font-black text-rose-500 uppercase tracking-widest ml-1'>Select Category</label>
+                                <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2'>
+                                    {categories.map((cat) => (
+                                        <button
+                                            key={cat.label}
+                                            type='button'
+                                            onClick={() => setSelectedCategory(cat.label)}
+                                            className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 group ${
+                                                selectedCategory === cat.label 
+                                                ? 'bg-rose-500 border-rose-500 text-white shadow-md' 
+                                                : 'bg-white border-rose-50 text-[#59413F] hover:border-rose-200'
+                                            }`}
+                                        >
+                                            <cat.icon size={16} className={selectedCategory === cat.label ? 'text-white' : 'text-rose-400'} />
+                                            <span className='text-[9px] font-bold uppercase tracking-tighter truncate w-full text-center'>{cat.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                                <input type='hidden' name='category' value={selectedCategory} required />
+                            </div>
+
+                            <div className='space-y-2'>
+                                <label className='text-[10px] font-black text-rose-500 uppercase tracking-widest ml-1'>Description</label>
+                                <textarea required name='description' placeholder='Describe the architectural beauty and features...' className='w-full h-40 px-5 py-4 bg-white border-2 border-rose-50 rounded-2xl focus:outline-none focus:border-rose-400 transition-all resize-none font-medium' />
+                            </div>
+                        </div>
+
+                        {/* Capacity & Pricing Group */}
+                        <div className='bg-white/80 backdrop-blur-xl rounded-[32px] p-8 shadow-sm border border-white/50'>
+                            <h2 className='text-xl font-black text-[#261817] uppercase tracking-tight mb-6 flex items-center gap-2'>
+                                <FaStar className='text-rose-500' />
+                                Pricing & Capacity
+                            </h2>
+                            <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+                                <div className='space-y-1.5'>
+                                    <label className='text-[9px] font-black text-[#59413F]/40 uppercase tracking-widest ml-1'>Price / Night</label>
+                                    <div className='relative'>
+                                        <FaDollarSign className='absolute left-4 top-1/2 -translate-y-1/2 text-rose-400 size-3' />
+                                        <input required name='price' type='number' className='w-full pl-9 pr-4 py-3.5 bg-rose-50/30 border-2 border-transparent rounded-xl focus:bg-white focus:border-rose-400 transition-all font-bold text-rose-600' />
+                                    </div>
+                                </div>
+                                <div className='space-y-1.5'>
+                                    <label className='text-[9px] font-black text-[#59413F]/40 uppercase tracking-widest ml-1'>Guests</label>
+                                    <div className='relative'>
+                                        <FaUsers className='absolute left-4 top-1/2 -translate-y-1/2 text-rose-400 size-3' />
+                                        <input required name='total_guest' type='number' className='w-full pl-9 pr-4 py-3.5 bg-rose-50/30 border-2 border-transparent rounded-xl focus:bg-white focus:border-rose-400 transition-all font-bold' />
+                                    </div>
+                                </div>
+                                <div className='space-y-1.5'>
+                                    <label className='text-[9px] font-black text-[#59413F]/40 uppercase tracking-widest ml-1'>Bedrooms</label>
+                                    <div className='relative'>
+                                        <FaBed className='absolute left-4 top-1/2 -translate-y-1/2 text-rose-400 size-3' />
+                                        <input required name='bedrooms' type='number' className='w-full pl-9 pr-4 py-3.5 bg-rose-50/30 border-2 border-transparent rounded-xl focus:bg-white focus:border-rose-400 transition-all font-bold' />
+                                    </div>
+                                </div>
+                                <div className='space-y-1.5'>
+                                    <label className='text-[9px] font-black text-[#59413F]/40 uppercase tracking-widest ml-1'>Bathrooms</label>
+                                    <div className='relative'>
+                                        <FaBath className='absolute left-4 top-1/2 -translate-y-1/2 text-rose-400 size-3' />
+                                        <input required name='bathrooms' type='number' className='w-full pl-9 pr-4 py-3.5 bg-rose-50/30 border-2 border-transparent rounded-xl focus:bg-white focus:border-rose-400 transition-all font-bold' />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className='p-8'>
-                        <form onSubmit={handleSubmit} className='space-y-8'>
-                            {/* Grid layout */}
-                            <div className='grid grid-cols-1 xl:grid-cols-2 gap-12'>
-                                {/* Left column */}
-                                <div className='space-y-8'>
-                                    {/* Location */}
-                                    <div className='group'>
-                                        <label
-                                            htmlFor='location'
-                                            className='block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide'
-                                        >
-                                            <FaMapMarkerAlt className='inline-block mr-2 text-rose-500' />
-                                            Location
-                                        </label>
-                                        <input
-                                            id='location'
-                                            name='location'
-                                            type='text'
-                                            placeholder='Enter your property address'
-                                            className='w-full px-6 py-4 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-100 transition-all duration-300 bg-white/50 backdrop-blur-sm group-hover:border-rose-300'
-                                            required
-                                        />
-                                    </div>
-
-                                    {/* Category */}
-                                    <div className='group'>
-                                        <label
-                                            htmlFor='category'
-                                            className='block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide'
-                                        >
-                                            <FaTag className='inline-block mr-2 text-rose-500' />
-                                            Category
-                                        </label>
-                                        <select
-                                            id='category'
-                                            name='category'
-                                            className='w-full px-6 py-4 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-100 transition-all duration-300 bg-white/50 backdrop-blur-sm appearance-none group-hover:border-rose-300'
-                                            required
-                                        >
-                                            <option value=''>Choose property type</option>
-                                            {categories.map(category => (
-                                                <option key={category.label} value={category.label}>
-                                                    {category.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    {/* Date Range Picker */}
-                                    <div className='group'>
-                                        <label className='block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide'>
-                                            <FaCalendarAlt className='inline-block mr-2 text-rose-500' />
-                                            Availability
-                                        </label>
-                                        <div className='bg-white border-2 border-gray-200 rounded-2xl p-6 transition-all duration-300 group-hover:border-rose-300 group-hover:shadow-md'>
-                                            <DateRange
-                                                editableDateInputs={true}
-                                                moveRangeOnFirstSelection={false}
-                                                onChange={item => handleDates(item)}
-                                                ranges={dates}
-                                                rangeColors={['#fb7185']}
-                                                className='w-full'
-                                            />
-
+                    {/* Right Column: Media & Calendar */}
+                    <div className='lg:col-span-5 space-y-6'>
+                        <div className='bg-white/80 backdrop-blur-xl rounded-[32px] p-8 shadow-sm border border-white/50 space-y-6'>
+                            <h2 className='text-xl font-black text-[#261817] uppercase tracking-tight flex items-center gap-2'>
+                                <FiCamera className='text-rose-500' />
+                                Media Gallery
+                            </h2>
+                            <div 
+                                onClick={() => document.getElementById('image').click()}
+                                className='aspect-[4/3] rounded-[24px] border-4 border-dashed border-rose-50 bg-rose-50/20 overflow-hidden cursor-pointer group relative flex items-center justify-center transition-all hover:bg-rose-50/40'
+                            >
+                                {previewImage ? (
+                                    <img src={previewImage} alt='Preview' className='w-full h-full object-cover transition-transform group-hover:scale-105' />
+                                ) : (
+                                    <div className='flex flex-col items-center gap-2 text-rose-300'>
+                                        <div className='p-4 bg-white rounded-2xl shadow-sm'>
+                                            <FaUpload size={24} />
                                         </div>
+                                        <span className='font-black uppercase text-[9px] tracking-widest'>Featured Image</span>
                                     </div>
-                                </div>
-
-                                {/* Right column */}
-                                <div className='space-y-8'>
-                                    {/* Title */}
-                                    <div className='group'>
-                                        <label
-                                            htmlFor='title'
-                                            className='block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide'
-                                        >
-                                            Title
-                                        </label>
-                                        <input
-                                            id='title'
-                                            name='title'
-                                            type='text'
-                                            placeholder='Catchy title for your property'
-                                            className='w-full px-6 py-4 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-100 transition-all duration-300 bg-white/50 backdrop-blur-sm group-hover:border-rose-300'
-                                            required
-                                        />
-                                    </div>
-
-                                    {/* Image upload */}
-                                    {/* Image upload */}
-                                    <div className='group'>
-                                        <label className='block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide'>
-                                            <FiCamera className='inline-block mr-2 text-rose-500' />
-                                            Photos
-                                        </label>
-
-                                        <div
-                                            className='border-2 border-dashed rounded-2xl p-8 border-rose-200 bg-rose-50/50 group-hover:border-rose-300 group-hover:bg-rose-50 transition-all duration-300 cursor-pointer text-center relative'
-                                            onClick={() => document.getElementById('image')?.click()}
-                                        >
-                                            {/* ✅ Preview area */}
-                                            {previewImage ? (
-                                                <div className='relative w-full flex justify-center'>
-                                                    <img
-                                                        src={previewImage}
-                                                        alt='Preview'
-                                                        className='w-48 h-48 object-cover rounded-2xl shadow-lg'
-                                                    />
-                                                    <button
-                                                        type='button'
-                                                        className='absolute top-2 right-2 bg-rose-600 text-white px-2 py-1 rounded-full text-xs'
-                                                        onClick={(e) => {
-                                                           
-                                                            
-                                                            setPreviewImage(null)
-                                                            document.getElementById('image').value = ''
-                                                        }}
-                                                    >
-                                                        ✕
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    <div className='w-20 h-20 bg-gradient-to-r from-rose-400 to-pink-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg mx-auto'>
-                                                        <FaUpload className='text-2xl text-white' />
-                                                    </div>
-                                                    <p className='text-gray-700 font-semibold text-lg mb-2'>
-                                                        Upload
-                                                    </p>
-                                                    <p className='text-gray-500 text-sm mb-4'>
-                                                        Click to browse. High-quality images recommended.
-                                                    </p>
-                                                    <span className='px-6 py-3 bg-white border border-rose-300 text-rose-600 rounded-xl font-medium hover:bg-rose-50 transition-colors duration-200'>
-                                                        Choose Files
-                                                    </span>
-                                                </>
-                                            )}
-
-                                            {/* ✅ Hidden file input */}
-                                            <input
-                                                id='image'
-                                                name='image'
-                                                type='file'
-                                                accept='image/*'
-                                                className='hidden'
-                                                onChange={handleImageChange}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Price & Guests */}
-                                    <div className='bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-6 border border-rose-100'>
-                                        <h3 className='font-semibold text-gray-800 mb-4 flex items-center'>
-                                            <FaStar className='text-rose-500 mr-2' />
-                                            Pricing & Capacity
-                                        </h3>
-                                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                                            <div className='space-y-2'>
-                                                <label
-                                                    htmlFor='price'
-                                                    className='block text-gray-700 font-medium text-sm'
-                                                >
-                                                    <FaDollarSign className='inline-block mr-1 text-rose-500' />
-                                                    Price
-                                                </label>
-                                                <input
-                                                    id='price'
-                                                    name='price'
-                                                    type='number'
-                                                    placeholder='0.00'
-                                                    className='w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white'
-                                                    required
-                                                />
-                                            </div>
-                                            <div className='space-y-2'>
-                                                <label
-                                                    htmlFor='guest'
-                                                    className='block text-gray-700 font-medium text-sm'
-                                                >
-                                                    <FaUsers className='inline-block mr-1 text-rose-500' />
-                                                    Guests
-                                                </label>
-                                                <input
-                                                    id='guest'
-                                                    name='total_guest'
-                                                    type='number'
-                                                    placeholder='Number of guests'
-                                                    className='w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white'
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Bedrooms & Bathrooms */}
-                                    <div className='bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-6 border border-rose-100'>
-                                        <h3 className='font-semibold text-gray-800 mb-4'>Details</h3>
-                                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                                            <div className='space-y-2'>
-                                                <label
-                                                    htmlFor='bedrooms'
-                                                    className='block text-gray-700 font-medium text-sm'
-                                                >
-                                                    <FaBed className='inline-block mr-1 text-rose-500' />
-                                                    Bedrooms
-                                                </label>
-                                                <input
-                                                    id='bedrooms'
-                                                    name='bedrooms'
-                                                    type='number'
-                                                    placeholder='No. of bedrooms'
-                                                    className='w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white'
-                                                    required
-                                                />
-                                            </div>
-                                            <div className='space-y-2'>
-                                                <label
-                                                    htmlFor='bathrooms'
-                                                    className='block text-gray-700 font-medium text-sm'
-                                                >
-                                                    <FaBath className='inline-block mr-1 text-rose-500' />
-                                                    Bathrooms
-                                                </label>
-                                                <input
-                                                    id='bathrooms'
-                                                    name='bathrooms'
-                                                    type='number'
-                                                    placeholder='No. of bathrooms'
-                                                    className='w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white'
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Description */}
-                                    <div className='group'>
-                                        <label
-                                            htmlFor='description'
-                                            className='block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide'
-                                        >
-                                            Description
-                                        </label>
-                                        <textarea
-                                            id='description'
-                                            name='description'
-                                            placeholder='Describe what makes your space special...'
-                                            className='w-full h-32 px-6 py-4 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-100 transition-all duration-300 bg-white/50 backdrop-blur-sm resize-none group-hover:border-rose-300'
-                                            required
-                                        ></textarea>
-                                        <div className='text-right text-sm text-gray-500 mt-2'>
-                                            <span>0/500 characters</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                )}
+                                <input id='image' name='image' type='file' accept='image/*' className='hidden' onChange={handleImageChange} required />
                             </div>
+                        </div>
 
-                            {/* Submit button */}
-                            <div className='pt-8 border-t border-gray-100'>
-                                <button
-                                disabled={loading}
-                                    type='submit'
-                                    className='w-full py-3 text-lg font-semibold text-white rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3'
-                                >
-                                   {loading ? (
-                                                      <TbFidgetSpinner className='animate-spin mx-auto' />
-                                                    ) : (
-                                                      'Save & Continue'
-                                                    )}
-                                    <div className='w-2 h-2 bg-white rounded-full animate-pulse'></div>
-                                </button>
+                        <div className='bg-white/80 backdrop-blur-xl rounded-[32px] p-8 shadow-sm border border-white/50 space-y-6'>
+                            <h2 className='text-xl font-black text-[#261817] uppercase tracking-tight flex items-center gap-2'>
+                                <FaCalendarAlt className='text-rose-500' />
+                                Availability
+                            </h2>
+                            <div className='bg-white rounded-2xl p-2 flex justify-center'>
+                                <DateRange
+                                    editableDateInputs={true}
+                                    moveRangeOnFirstSelection={false}
+                                    onChange={item => handleDates(item)}
+                                    ranges={dates}
+                                    rangeColors={['#fb7185']}
+                                    className='w-full dashboard-calendar-simple'
+                                />
                             </div>
-                        </form>
+                        </div>
+
+                        <button
+                            disabled={loading}
+                            type='submit'
+                            className='w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white py-5 rounded-[24px] font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-rose-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-70 flex items-center justify-center gap-3'
+                        >
+                            {loading ? <TbFidgetSpinner className='animate-spin' /> : 'Publish Listing'}
+                            {!loading && <FaCheckCircle />}
+                        </button>
                     </div>
-                </div>
+                </form>
             </div>
+            
+            <style>{`
+                .dashboard-calendar-simple { border: none !important; font-family: inherit !important; }
+                .dashboard-calendar-simple .rdrMonth { width: 100% !important; }
+            `}</style>
         </div>
     )
 }
 
 export default AddRoomForm
+
